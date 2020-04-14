@@ -11,7 +11,7 @@ namespace CNBot.API
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            host.MigrateDbContext<ApplicationDbContext>((_, __) => { });
+            host.MigrateDbContext<IDbContext>((_, __) => { });
             host.Run();
         }
 

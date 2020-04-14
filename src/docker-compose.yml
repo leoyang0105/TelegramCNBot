@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  cnbot.api:
+    image: ${DOCKER_REGISTRY}/cnbotapi
+    build:
+      context: .
+      dockerfile: CNBot.API/Dockerfile

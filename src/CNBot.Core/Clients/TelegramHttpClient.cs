@@ -53,7 +53,11 @@ namespace CNBot.Core.Clients
         {
             var url = TelegramUrlsConfig.Message.Send(_settings.ApiToken);
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Content = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, ApplicationDefaults.DefaultContentType);
+            request.Content = new StringContent(JsonConvert.SerializeObject(dto, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }), Encoding.UTF8, ApplicationDefaults.DefaultContentType);
             var response = await _httpClient.SendAsync(request);
 
             var responseBody = await response.Content.ReadAsStringAsync();

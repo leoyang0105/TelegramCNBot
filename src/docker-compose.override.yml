@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  cnbot.api:
+    environment:
+      - TZ=Asia/Shanghai
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:80
+      - DefaultConnection=Server=${DB_HOST};Database=${DB_NAME_PREFIX}cnbot;User Id=${DB_USER};Password=${DB_PASSWORD};TreatTinyAsBoolean=true;
+      - RedisConnection=${REDIS_CONNECTION}
+      - Telegram__ApiToken=${TELEGRAM_API_TOKEN}
+      - RabbitMQConfiguration__HostName=${RABBITMQ_HOST}
+      - RabbitMQConfiguration__VirtualHost=${RABBITMQ_VIRTUAL_HOST}
+      - RabbitMQConfiguration__UserName=${RABBITMQ_USERNAME}
+      - RabbitMQConfiguration__Password=${RABBITMQ_PASSWORD}
+      - RabbitMQConfiguration__QueueName=${RABBITMQ_QUEUE_NAME}
+      - RabbitMQConfiguration__RetryCount=${RABBITMQ_RETRY_COUNT}
+    ports:
+      - "80"

@@ -7,16 +7,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FE462626-CCF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{70362A87-5D18-479E-BD85-EB4C0B2446A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CNBot.Core", "CNBot.Core\CNBot.Core.csproj", "{2E9A212F-BA88-4F7F-BB7A-6485E5C2369B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CNBot.Core", "CNBot.Core\CNBot.Core.csproj", "{2E9A212F-BA88-4F7F-BB7A-6485E5C2369B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CNBot.Infrastructure", "CNBot.Infrastructure\CNBot.Infrastructure.csproj", "{4B238F42-3115-4200-B4C4-62BD785F0B3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CNBot.Infrastructure", "CNBot.Infrastructure\CNBot.Infrastructure.csproj", "{4B238F42-3115-4200-B4C4-62BD785F0B3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CNBot.API", "CNBot.API\CNBot.API.csproj", "{8B69E659-E5E2-4E91-BEB2-37E57A2EC568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CNBot.API", "CNBot.API\CNBot.API.csproj", "{8B69E659-E5E2-4E91-BEB2-37E57A2EC568}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D31178ED-23D7-4E5E-8A85-CAAE573BCC5A}"
 	ProjectSection(SolutionItems) = preProject
 		.env = .env
 	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,18 @@ Global
 		{8B69E659-E5E2-4E91-BEB2-37E57A2EC568}.Release|x64.Build.0 = Release|Any CPU
 		{8B69E659-E5E2-4E91-BEB2-37E57A2EC568}.Release|x86.ActiveCfg = Release|Any CPU
 		{8B69E659-E5E2-4E91-BEB2-37E57A2EC568}.Release|x86.Build.0 = Release|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Debug|x64.Build.0 = Debug|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Debug|x86.Build.0 = Debug|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Release|x64.ActiveCfg = Release|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Release|x64.Build.0 = Release|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Release|x86.ActiveCfg = Release|Any CPU
+		{3FB5AD7A-5F4B-4784-96CA-367912DF00C5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

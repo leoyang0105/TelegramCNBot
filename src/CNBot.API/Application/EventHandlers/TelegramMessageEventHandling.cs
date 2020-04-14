@@ -139,17 +139,19 @@ namespace CNBot.API.Application.EventHandlers
                     break;
                 case UserCommandType.List:
                     message.Text = @"<a href=""https://t.me/cn_tg_bot"">CN_Bot</a>";
+                    message.ParseMode = nameof(MessageParseModelType.Html);
                     break;
                 case UserCommandType.MyList:
                     message.Text = @"<a href=""https://t.me/cn_tg_bot"">CN_Bot</a>";
+                    message.ParseMode = nameof(MessageParseModelType.Html);
                     break;
                 case UserCommandType.Reset:
                     message.Text = "命令状态已重置";
                     message.ReplyMarkup = new { remove_keyboard = true };
-                    command.Completed = true;
-                    await _userService.UpdateCommand(command);
                     break;
             }
+            command.Completed = true;
+            await _userService.UpdateCommand(command);
             await _telegramHttpClient.SendMessage(message);
         }
         private UserCommandType ConvertCommandType(string text)

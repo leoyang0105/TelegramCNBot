@@ -53,7 +53,7 @@ namespace CNBot.Infrastructure.Extensions
 
                 var factory = new ConnectionFactory()
                 {
-                    HostName = config.ConnectionString,
+                    HostName = config.HostName,
                     DispatchConsumersAsync = true
                 };
                 if (!string.IsNullOrEmpty(config.VirtualHost))

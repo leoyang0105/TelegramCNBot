@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CNBot.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,7 +19,7 @@ namespace CNBot.Infrastructure.Extensions
             return orchestratorType?.ToUpper() == "K8S";
         }
 
-        public static IHost MigrateDbContext<TContext>(this IHost host, Action<TContext, IServiceProvider> seeder) where TContext : DbContext
+        public static IHost MigrateDbContext<TContext>(this IHost host, Action<TContext, IServiceProvider> seeder) where TContext : IDbContext
         {
             var underK8s = host.IsInKubernetes();
 
@@ -71,7 +72,7 @@ namespace CNBot.Infrastructure.Extensions
         }
 
         private static void InvokeSeeder<TContext>(Action<TContext, IServiceProvider> seeder, TContext context, IServiceProvider services)
-            where TContext : DbContext
+            where TContext : IDbContext
         {
             context.Database.Migrate();
             seeder(context, services);
