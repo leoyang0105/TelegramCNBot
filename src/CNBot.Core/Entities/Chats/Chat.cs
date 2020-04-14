@@ -10,7 +10,7 @@ namespace CNBot.Core.Entities.Chats
         public string Description { get; set; }
         public ChatType ChatType { get; set; }
         public DateTime Created { get; set; }
-        public DateTime Updated { get; set; }
-        public ChatPhoto ChatPhoto { get; set; }
+        public DateTime Updated { get; set; } 
+        public int MembersCount { get; set; }
     }
 }

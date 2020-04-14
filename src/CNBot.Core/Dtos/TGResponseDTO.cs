@@ -2,13 +2,13 @@
 
 namespace CNBot.Core.Dtos
 {
-    public class TGResponseDTO
+    public class TGResponseDTO<T>
     {
         [JsonProperty("ok")]
         public bool IsOK { get; set; }
 
         [JsonProperty("result")]
-        public object Result { get; set; }
+        public T Result { get; set; }
 
         [JsonProperty("error_code")]
         public int ErrorCode { get; set; }

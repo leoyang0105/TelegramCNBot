@@ -17,8 +17,4 @@
     <ProjectReference Include="..\CNBot.Core\CNBot.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EntityTypeConfigurations\" />
-  </ItemGroup>
-
 </Project>

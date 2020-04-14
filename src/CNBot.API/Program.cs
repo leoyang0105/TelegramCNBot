@@ -1,3 +1,4 @@
+using CNBot.Core;
 using CNBot.Infrastructure;
 using CNBot.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Hosting;

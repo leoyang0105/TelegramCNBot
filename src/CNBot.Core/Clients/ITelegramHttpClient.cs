@@ -1,13 +1,14 @@
 ﻿using CNBot.Core.Dtos;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CNBot.Core.Clients
 {
     public interface ITelegramHttpClient
     {
-        Task<TGResponseDTO> GetChat(string chatId);
-        Task<TGResponseDTO> GetChatAdministrators(string chatId);
-        Task<TGResponseDTO> GetChatMembersCount(string chatId);
-        Task<TGResponseDTO> SendMessage(object dto);
+        Task<TGResponseDTO<TGChatDTO>> GetChat(string chatId);
+        Task<TGResponseDTO<List<TGChatMemberDTO>>> GetChatAdministrators(string chatId);
+        Task<TGResponseDTO<int>> GetChatMembersCount(string chatId);
+        Task<TGResponseDTO<TGMessageDTO>> SendMessage(TGSendMessageDTO dto);
     }
 }

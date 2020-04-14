@@ -22,34 +22,34 @@ namespace CNBot.Core.Clients
             _httpClient = httpClient;
         }
         #region Chats
-        public async Task<TGResponseDTO> GetChat(string chatId)
+        public async Task<TGResponseDTO<TGChatDTO>> GetChat(string chatId)
         {
             var url = TelegramUrlsConfig.Chat.Get(_settings.ApiToken, chatId);
             var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TGResponseDTO>(responseBody);
+            return JsonConvert.DeserializeObject<TGResponseDTO<TGChatDTO>>(responseBody);
         }
-        public async Task<TGResponseDTO> GetChatMembersCount(string chatId)
+        public async Task<TGResponseDTO<int>> GetChatMembersCount(string chatId)
         {
             var url = TelegramUrlsConfig.Chat.GetMembersCount(_settings.ApiToken, chatId);
             var response = await _httpClient.GetAsync(url);
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TGResponseDTO>(responseBody);
+            return JsonConvert.DeserializeObject<TGResponseDTO<int>>(responseBody);
         }
-        public async Task<TGResponseDTO> GetChatAdministrators(string chatId)
+        public async Task<TGResponseDTO<List<TGChatMemberDTO>>> GetChatAdministrators(string chatId)
         {
             var url = TelegramUrlsConfig.Chat.GetAdministrators(_settings.ApiToken, chatId);
             var response = await _httpClient.GetAsync(url);
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TGResponseDTO>(responseBody);
+            return JsonConvert.DeserializeObject<TGResponseDTO<List<TGChatMemberDTO>>>(responseBody);
         }
         #endregion
         #region Messages
-        public async Task<TGResponseDTO> SendMessage(object dto)
+        public async Task<TGResponseDTO<TGMessageDTO>> SendMessage(TGSendMessageDTO dto)
         {
             var url = TelegramUrlsConfig.Message.Send(_settings.ApiToken);
             var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -57,7 +57,7 @@ namespace CNBot.Core.Clients
             var response = await _httpClient.SendAsync(request);
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TGResponseDTO>(responseBody);
+            return JsonConvert.DeserializeObject<TGResponseDTO<TGMessageDTO>>(responseBody);
         }
         #endregion
     }

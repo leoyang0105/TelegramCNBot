@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CNBot.API.Application.EventHandlers;
+using CNBot.API.Application.Events;
 using CNBot.Core.Clients;
 using CNBot.Core.Configurations;
 using CNBot.Core.EventBus.Abstractions;
+using CNBot.Core.Services;
 using CNBot.Infrastructure;
 using CNBot.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +42,12 @@ namespace CNBot.API
             services.RegisterRabbitMQ(Configuration);
 
             RegisterTelegramHttpClients(services);
+
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddTransient<TelegramChatRefreshEventHandling>();
+            services.AddTransient<TelegramMessageEventHandling>();
+            services.AddTransient<TelegramUpdateEventHandling>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,9 +71,12 @@ namespace CNBot.API
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<TelegramChatRefreshEvent, TelegramChatRefreshEventHandling>();
+            eventBus.Subscribe<TelegramMessageEvent, TelegramMessageEventHandling>();
+            eventBus.Subscribe<TelegramUpdateEvent, TelegramUpdateEventHandling>();
 
         }
-        private void RegisterTelegramHttpClients(IServiceCollection  services)
+        private void RegisterTelegramHttpClients(IServiceCollection services)
         {
             services.Configure<TelegramUrlsConfig>(Configuration.GetSection("Telegram"));
             services.AddHttpClient<ITelegramHttpClient, TelegramHttpClient>().AddPolicyHandler(GetRetryPolicy());

@@ -6,7 +6,7 @@ namespace CNBot.Core.Entities.Messages
 {
     public enum MessageEntityType
     {
-        None,
+        none,
         mention,
         hashtag,
         cashtag,
