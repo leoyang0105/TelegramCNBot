@@ -9,16 +9,16 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace CNBot.API.Application.EventHandlers
+namespace CNBot.API.Application.EventHandling
 {
-    public class TelegramChatRefreshEventHandling : IIntegrationEventHandler<TelegramChatRefreshEvent>
+    public class TelegramChatRefreshEventHandler : IIntegrationEventHandler<TelegramChatRefreshEvent>
     {
         private readonly ILogger _logger;
         private readonly IRepository<Chat> _chatRepository;
         private readonly ITelegramHttpClient _telegramHttpClient;
         private readonly IChatService _chatService;
-        public TelegramChatRefreshEventHandling(
-            ILogger<TelegramChatRefreshEventHandling> logger,
+        public TelegramChatRefreshEventHandler(
+            ILogger<TelegramChatRefreshEventHandler> logger,
             IRepository<Chat> chatRepository,
             ITelegramHttpClient telegramHttpClient,
             IChatService chatService)

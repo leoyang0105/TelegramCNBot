@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using CNBot.API.Application.EventHandlers;
+using CNBot.API.Application.EventHandling;
 using CNBot.API.Application.Events;
 using CNBot.Core.Clients;
 using CNBot.Core.Configurations;
@@ -13,11 +10,9 @@ using CNBot.Infrastructure;
 using CNBot.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -45,13 +40,13 @@ namespace CNBot.API
 
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddTransient<TelegramChatRefreshEventHandling>();
-            services.AddTransient<TelegramMessageEventHandling>();
-            services.AddTransient<TelegramUpdateEventHandling>();
+            services.AddTransient<TelegramChatRefreshEventHandler>();
+            services.AddTransient<TelegramMessageEventHandler>();
+            services.AddTransient<TelegramUpdateEventHandler>();
 
-            services.AddTransient<TelegramChatJoinEventHandling>();
-            services.AddTransient<TelegramChatUpdateEventHandling>();
-            services.AddTransient<TelegramChatRemoveEventHandling>();
+            services.AddTransient<TelegramChatJoinEventHandler>();
+            services.AddTransient<TelegramChatUpdateEventHandler>();
+            services.AddTransient<TelegramChatRemoveEventHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,13 +70,13 @@ namespace CNBot.API
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<TelegramChatRefreshEvent, TelegramChatRefreshEventHandling>();
-            eventBus.Subscribe<TelegramMessageEvent, TelegramMessageEventHandling>();
-            eventBus.Subscribe<TelegramUpdateEvent, TelegramUpdateEventHandling>();
+            eventBus.Subscribe<TelegramChatRefreshEvent, TelegramChatRefreshEventHandler>();
+            eventBus.Subscribe<TelegramMessageEvent, TelegramMessageEventHandler>();
+            eventBus.Subscribe<TelegramUpdateEvent, TelegramUpdateEventHandler>();
 
-            eventBus.Subscribe<TelegramChatJoinEvent, TelegramChatJoinEventHandling>();
-            eventBus.Subscribe<TelegramChatUpdateEvent, TelegramChatUpdateEventHandling>();
-            eventBus.Subscribe<TelegramChatRemoveEvent, TelegramChatRemoveEventHandling>();
+            eventBus.Subscribe<TelegramChatJoinEvent, TelegramChatJoinEventHandler>();
+            eventBus.Subscribe<TelegramChatUpdateEvent, TelegramChatUpdateEventHandler>();
+            eventBus.Subscribe<TelegramChatRemoveEvent, TelegramChatRemoveEventHandler>();
 
         }
         private void RegisterTelegramHttpClients(IServiceCollection services)

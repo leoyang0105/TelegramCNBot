@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CNBot.API.Application.EventHandlers
+namespace CNBot.API.Application.EventHandling
 {
-    public class TelegramMessageEventHandling : IIntegrationEventHandler<TelegramMessageEvent>
+    public class TelegramMessageEventHandler : IIntegrationEventHandler<TelegramMessageEvent>
     {
         private readonly ILogger _logger;
         private readonly IEventBus _eventBus;
@@ -24,8 +24,8 @@ namespace CNBot.API.Application.EventHandlers
         private readonly IUserService _userService;
         private readonly IChatService _chatService;
         private readonly ITelegramHttpClient _telegramHttpClient;
-        public TelegramMessageEventHandling(
-            ILogger<TelegramMessageEventHandling> logger,
+        public TelegramMessageEventHandler(
+            ILogger<TelegramMessageEventHandler> logger,
             IEventBus eventBus,
             IRepository<Message> messageRepository,
             IUserService userService,

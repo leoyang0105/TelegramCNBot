@@ -10,16 +10,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CNBot.API.Application.EventHandlers
+namespace CNBot.API.Application.EventHandling
 {
-    public class TelegramChatJoinEventHandling : IIntegrationEventHandler<TelegramChatJoinEvent>
+    public class TelegramChatJoinEventHandler : IIntegrationEventHandler<TelegramChatJoinEvent>
     {
         private readonly ILogger _logger;
         private readonly IEventBus _eventBus;
         private readonly IChatService _chatService;
         private readonly ITelegramHttpClient _telegramHttpClient;
-        public TelegramChatJoinEventHandling(
-            ILogger<TelegramChatJoinEventHandling> logger,
+        public TelegramChatJoinEventHandler(
+            ILogger<TelegramChatJoinEventHandler> logger,
             IEventBus eventBus,
             IChatService chatService,
             ITelegramHttpClient telegramHttpClient)

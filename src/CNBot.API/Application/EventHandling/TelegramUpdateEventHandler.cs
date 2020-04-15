@@ -13,16 +13,16 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CNBot.API.Application.EventHandlers
+namespace CNBot.API.Application.EventHandling
 {
-    public class TelegramUpdateEventHandling : IIntegrationEventHandler<TelegramUpdateEvent>
+    public class TelegramUpdateEventHandler : IIntegrationEventHandler<TelegramUpdateEvent>
     {
         private readonly ILogger _logger;
         private readonly IEventBus _eventBus;
         private readonly IRepository<Chat> _chatRepository;
         private readonly IRepository<User> _userRepository;
-        public TelegramUpdateEventHandling(
-            ILogger<TelegramUpdateEventHandling> logger,
+        public TelegramUpdateEventHandler(
+            ILogger<TelegramUpdateEventHandler> logger,
             IEventBus eventBus,
             IRepository<Chat> chatRepository,
             IRepository<User> userRepository)

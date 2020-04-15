@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CNBot.API.Application.EventHandlers
+namespace CNBot.API.Application.EventHandling
 {
-    public class TelegramChatRemoveEventHandling : IIntegrationEventHandler<TelegramChatRemoveEvent>
+    public class TelegramChatRemoveEventHandler : IIntegrationEventHandler<TelegramChatRemoveEvent>
     {
         public async Task Handle(TelegramChatRemoveEvent @event)
         {
