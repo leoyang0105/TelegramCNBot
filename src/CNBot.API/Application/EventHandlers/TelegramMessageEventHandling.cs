@@ -2,6 +2,7 @@
 using CNBot.Core;
 using CNBot.Core.Clients;
 using CNBot.Core.Dtos;
+using CNBot.Core.Entities.Chats;
 using CNBot.Core.Entities.Messages;
 using CNBot.Core.Entities.Users;
 using CNBot.Core.EventBus.Abstractions;
@@ -256,12 +257,41 @@ namespace CNBot.API.Application.EventHandlers
         {
             var paged = _chatService.GetChatsPaged(1, 20, tgUserId, null);
 
+            message.ParseMode = nameof(MessageParseModelType.Html);
+            message.DisableWebPagePreview = true;
             foreach (var item in paged.Data)
             {
-                message.Text += $"[👤{item.MembersCount}] {item.Title} \n";
+                var chatTypeIcon = string.Empty;
+                if (item.ChatType == ChatType.Channel)
+                {
+                    chatTypeIcon = "📢|";
+                }
+                else if (item.ChatType == ChatType.Group || item.ChatType == ChatType.SuperGroup)
+                {
+                    chatTypeIcon = "👥|";
+                }
+                message.Text += $"{chatTypeIcon}👤{item.MembersCount}| <a href=\"https://t.me/{item.UserName}\">{item.Title}</a>\n";
             }
+            // message.ReplyMarkup = this.BuildListPager(1, paged.TotalPages);
 
             await _telegramHttpClient.SendMessage(message);
+        }
+        private TGInlineKeyboardMarkup BuildListPager(int pageIndex, int totalPages)
+        {
+            var pager = new TGInlineKeyboardMarkup
+            {
+                InlineKeyboard = new[]
+                {
+                    new List<TGInlineKeyboardMarkup.InlineKeyboardButton>()
+                    {
+                        new TGInlineKeyboardMarkup.InlineKeyboardButton
+                        {
+
+                        }
+                    }
+                }
+            };
+            return pager;
         }
     }
 }

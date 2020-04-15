@@ -15,6 +15,9 @@ namespace CNBot.Core.Dtos
         public long ReplyToMessageId { get; set; }
         [JsonProperty("reply_markup")]
         public object ReplyMarkup { get; set; }
+
+        [JsonProperty("disable_web_page_preview")]
+        public bool DisableWebPagePreview { get; set; }
     }
     public class TGReplyKeyboardMarkup
     {
@@ -37,6 +40,28 @@ namespace CNBot.Core.Dtos
             public bool RequestLocation { get; set; }
             [JsonProperty("request_poll")]
             public object RequestPoll { get; set; }
+        }
+    }
+    public class TGInlineKeyboardMarkup
+    {
+        [JsonProperty("inline_keyboard")]
+        public List<InlineKeyboardButton>[] InlineKeyboard { get; set; }
+        public class InlineKeyboardButton
+        {
+            [JsonProperty("text")]
+            public string Text { get; set; }
+            [JsonProperty("url")]
+            public string Url { get; set; }
+            [JsonProperty("login_url")]
+            public string LoginUrl { get; set; }
+            [JsonProperty("callback_data")]
+            public string CallbackData { get; set; }
+            [JsonProperty("switch_inline_query")]
+            public string WwitchInlineQuery { get; set; }
+            [JsonProperty("switch_inline_query_current_chat")]
+            public string WwitchInlineQueryCurrentChat { get; set; }
+            [JsonProperty("pay")]
+            public bool Pay { get; set; } 
         }
     }
     public enum MessageParseModelType
