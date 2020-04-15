@@ -3,39 +3,21 @@ using System;
 using CNBot.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CNBot.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200415023753_changIntToLong")]
+    partial class changIntToLong
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            modelBuilder.Entity("CNBot.Core.Entities.Chats.Category", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Category");
-                });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.Chat", b =>
                 {
@@ -48,9 +30,6 @@ namespace CNBot.Infrastructure.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<long>("CreatorId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext CHARACTER SET utf8")
@@ -79,27 +58,6 @@ namespace CNBot.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("chat");
-                });
-
-            modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatCategory", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ChatId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("ChatCategory");
                 });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatMember", b =>
@@ -261,21 +219,6 @@ namespace CNBot.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_command");
-                });
-
-            modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatCategory", b =>
-                {
-                    b.HasOne("CNBot.Core.Entities.Chats.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CNBot.Core.Entities.Chats.Chat", "Chat")
-                        .WithMany("ChatCategories")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatMember", b =>

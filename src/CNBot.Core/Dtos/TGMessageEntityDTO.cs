@@ -15,7 +15,7 @@ namespace CNBot.Core.Dtos
         [JsonProperty("url")]
         public string Url { get; set; }
         [JsonProperty("user")]
-        public object User { get; set; }
+        public TGUserDTO User { get; set; }
         [JsonProperty("language")]
         public string Language { get; set; }
         public MessageEntityType GetEntityType()

@@ -8,9 +8,9 @@ namespace CNBot.Core.Entities.Messages
     {
         private ICollection<MessageEntity> _messageEntities;
         public string Text { get; set; }
-        public int TGMessageId { get; set; }
-        public int TGChatId { get; set; }
-        public int FromTGUserId { get; set; }
+        public long TGMessageId { get; set; }
+        public long TGChatId { get; set; }
+        public long FromTGUserId { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
         public ICollection<MessageEntity> MessageEntities

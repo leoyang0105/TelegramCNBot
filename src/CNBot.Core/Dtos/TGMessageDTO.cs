@@ -5,7 +5,7 @@ namespace CNBot.Core.Dtos
     public class TGMessageDTO
     {
         [JsonProperty("message_id")]
-        public int MessageId { get; set; }
+        public long MessageId { get; set; }
         /// <summary>
         /// From user
         /// </summary>
@@ -21,7 +21,7 @@ namespace CNBot.Core.Dtos
         #region Forward info
 
         [JsonProperty("forward_from_message_id")]
-        public int ForwardFromMessageId { get; set; }
+        public long ForwardFromMessageId { get; set; }
         [JsonProperty("forward_signature")]
         public string ForwardSignature { get; set; }
         [JsonProperty("forward_sender_name")]

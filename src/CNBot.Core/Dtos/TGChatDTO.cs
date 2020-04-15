@@ -6,7 +6,7 @@ namespace CNBot.Core.Dtos
     public class TGChatDTO
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("type")]
         public string Type { get; set; }
         [JsonProperty("title")]

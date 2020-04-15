@@ -5,7 +5,7 @@ namespace CNBot.Core.Dtos
     public class TGUserDTO
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("is_bot")]
         public bool IsBot { get; set; }
         [JsonProperty("first_name")]

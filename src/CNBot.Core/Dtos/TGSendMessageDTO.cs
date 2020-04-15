@@ -6,13 +6,13 @@ namespace CNBot.Core.Dtos
     public class TGSendMessageDTO
     {
         [JsonProperty("chat_id")]
-        public int ChatId { get; set; }
+        public long ChatId { get; set; }
         [JsonProperty("text")]
         public string Text { get; set; }
         [JsonProperty("parse_mode")]
         public string ParseMode { get; set; }
         [JsonProperty("reply_to_message_id")]
-        public int ReplyToMessageId { get; set; }
+        public long ReplyToMessageId { get; set; }
         [JsonProperty("reply_markup")]
         public object ReplyMarkup { get; set; }
     }

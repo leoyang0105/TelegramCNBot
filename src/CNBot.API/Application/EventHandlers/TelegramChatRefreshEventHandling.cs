@@ -61,14 +61,23 @@ namespace CNBot.API.Application.EventHandlers
                     {
                         foreach (var admin in administratorsResponse.Result)
                         {
-                            await _chatService.CreateOrUpdateMember(new ChatMember
+                            var member = new ChatMember
                             {
                                 ChatId = chat.Id,
                                 TGUserId = admin.User.Id,
                                 Status = admin.GetStatus(),
                                 Permissions = admin.GetPermission(),
                                 Created = DateTime.UtcNow
-                            });
+                            };
+                            await _chatService.CreateOrUpdateMember(member);
+
+                            if (member.Status == ChatMemberStatusType.Creator && 
+                                member.TGUserId == @event.TGUserId && 
+                                member.TGUserId != chat.CreatorId)  //更新归属到群主
+                            {
+                                chat.CreatorId = member.TGUserId;
+                                await _chatRepository.UpdateAsync(chat);
+                            }
                         }
                     }
                 }

@@ -7,10 +7,10 @@ namespace CNBot.API.Application.Events
     public class TelegramMessageEvent : IntegrationEvent
     {
         public long UserId { get; set; }
-        public int TGChatId { get; set; }
+        public long TGChatId { get; set; }
         public ChatType ChatType { get; set; }
         public Message Message { get; set; }
-        public TelegramMessageEvent(Message message, long userId, int tgChatId, ChatType chatType)
+        public TelegramMessageEvent(Message message, long userId, long tgChatId, ChatType chatType)
         {
             Message = message;
             UserId = userId;

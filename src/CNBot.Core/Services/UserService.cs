@@ -21,7 +21,7 @@ namespace CNBot.Core.Services
         }
         public async Task<UserCommand> FindLastCommand(long userId)
         {
-            return await _userCommandRepository.TableNoTracking.LastOrDefaultAsync(c => c.UserId == userId);
+            return await _userCommandRepository.TableNoTracking.OrderByDescending(s=>s.Id).FirstOrDefaultAsync(c => c.UserId == userId);
         }
         public async Task UpdateCommand(UserCommand command)
         {

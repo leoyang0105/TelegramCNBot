@@ -18,18 +18,24 @@ namespace CNBot.API.Application.EventHandlers
     public class TelegramMessageEventHandling : IIntegrationEventHandler<TelegramMessageEvent>
     {
         private readonly ILogger _logger;
+        private readonly IEventBus _eventBus;
         private readonly IRepository<Message> _messageRepository;
         private readonly IUserService _userService;
+        private readonly IChatService _chatService;
         private readonly ITelegramHttpClient _telegramHttpClient;
         public TelegramMessageEventHandling(
             ILogger<TelegramMessageEventHandling> logger,
+            IEventBus eventBus,
             IRepository<Message> messageRepository,
             IUserService userService,
+            IChatService chatService,
             ITelegramHttpClient telegramHttpClient)
         {
             _logger = logger;
+            _eventBus = eventBus;
             _messageRepository = messageRepository;
             _userService = userService;
+            _chatService = chatService;
             _telegramHttpClient = telegramHttpClient;
         }
         public async Task Handle(TelegramMessageEvent @event)
@@ -48,14 +54,18 @@ namespace CNBot.API.Application.EventHandlers
         {
             if (@event.ChatType != Core.Entities.Chats.ChatType.Private)
             {
-                // Only use command in private chat
-                var message = new TGSendMessageDTO
+                if (@event.Message.Text.ToUpper().Contains(ApplicationDefaults.CNBotUserName))
                 {
-                    ChatId = @event.TGChatId,
-                    Text = "群组中无法使用命令，请在私聊中使用",
-                    ReplyToMessageId = @event.Message.TGMessageId
-                };
-                await _telegramHttpClient.SendMessage(message);
+                    // Only use command in private chat
+                    var message = new TGSendMessageDTO
+                    {
+                        ChatId = @event.TGChatId,
+                        Text = "群组中无法使用命令，请在私聊中使用",
+                        ReplyToMessageId = @event.Message.TGMessageId,
+                        ParseMode = nameof(MessageParseModelType.Html)
+                    };
+                    await _telegramHttpClient.SendMessage(message);
+                }
                 return;
             }
             UserCommand command = null;
@@ -63,6 +73,14 @@ namespace CNBot.API.Application.EventHandlers
 
             if (@event.Message.MessageEntities.Any(s => s.Type.Equals(MessageEntityType.bot_command)))
             {
+                if (@event.Message.Text.Contains("@"))
+                {
+                    if (!@event.Message.Text.EndsWith(ApplicationDefaults.CNBotUserName))
+                    {
+
+                        return;
+                    }
+                }
                 command = new UserCommand
                 {
                     Created = utcNow,
@@ -81,10 +99,16 @@ namespace CNBot.API.Application.EventHandlers
             {
                 command = await _userService.FindLastCommand(@event.UserId);
             }
-            if (command == null)
+            if (command == null || command.Completed)
             {
                 // No command found. So we show the default message E.g :what can i help you?
-                //TODO Send message : default message
+                var message = new TGSendMessageDTO
+                {
+                    ChatId = @event.TGChatId,
+                    Text = "无法识别该命令，要查看帮助请输入 /help",
+                    ReplyToMessageId = @event.Message.TGMessageId
+                };
+                await _telegramHttpClient.SendMessage(message);
             }
             else
             {
@@ -100,62 +124,106 @@ namespace CNBot.API.Application.EventHandlers
             switch (command.Type)
             {
                 case UserCommandType.Remove:
-                    message.Text = "请点击下方按钮选择要删除的群组";
-                    message.ReplyMarkup = new TGReplyKeyboardMarkup
                     {
-                        OneTimeKeyboard = true,
-                        Keyboard = new[]
+                        if (ApplicationDefaults.Commands.Contains(@event.Message.Text))
                         {
-                            new List<TGReplyKeyboardMarkup.KeyboardButton>()
-                            {
-                                new TGReplyKeyboardMarkup.KeyboardButton
-                                {
-                                   Text = "@cn_tg_bot",
-                                   RequestContact=true
-                                },
-                                 new TGReplyKeyboardMarkup.KeyboardButton
-                                {
-                                   Text = "@ProgrammerClub",
-                                   RequestLocation=true
-                                }
-                            }
+                            message.Text = "【移除收录】请输入群组或频道用户名(可直接分享或粘贴群组链接)";
+                            message.ReplyMarkup = new { remove_keyboard = true };
+                            await _telegramHttpClient.SendMessage(message);
                         }
-                    };
-                    break;
+                        else
+                        {
+                            _eventBus.Publish(new TelegramChatRemoveEvent(@event.Message.FromTGUserId, @event.Message.Text));
+                        }
+                        break;
+                    }
+                //message.Text = "请点击下方按钮选择要删除的群组";
+                //message.ReplyMarkup = new TGReplyKeyboardMarkup
+                //{
+                //    OneTimeKeyboard = true,
+                //    Keyboard = new[]
+                //    {
+                //        new List<TGReplyKeyboardMarkup.KeyboardButton>()
+                //        {
+                //            new TGReplyKeyboardMarkup.KeyboardButton
+                //            {
+                //               Text = "@cn_tg_bot",
+                //               RequestContact=true
+                //            },
+                //             new TGReplyKeyboardMarkup.KeyboardButton
+                //            {
+                //               Text = "@ProgrammerClub",
+                //               RequestLocation=true
+                //            }
+                //        }
+                //    }
+                //};
                 case UserCommandType.Help:
-                    message.Text =
-                        "/list 列出已收录群组分类 \n" +
-                        "/mylist 列出你是创建人的群组或频道 \n" +
-                        "/join 收录群组或频道 \n" +
-                        "/update 更改群组或频道分类 \n" +
-                        "/remove 移除群组或频道 \n" +
-                        "/reset 重置命令状态";
-                    break;
+                    {
+                        message.Text =
+                            "/list 列出已收录群组分类 \n" +
+                            "/mylist 列出你是创建人的群组或频道 \n" +
+                            "/join 收录群组或频道 \n" +
+                            "/update 更改群组或频道分类 \n" +
+                            "/remove 移除群组或频道 \n" +
+                            "/reset 重置命令状态";
+                        command.Completed = true;
+                        message.ReplyMarkup = new { remove_keyboard = true };
+                        await _userService.UpdateCommand(command);
+                        await _telegramHttpClient.SendMessage(message);
+                        break;
+                    }
                 case UserCommandType.Update:
-                    message.Text = "请点击下方按钮选择要更改的群组或频道";
-                    break;
+                    {
+                        if (ApplicationDefaults.Commands.Contains(@event.Message.Text))
+                        {
+                            message.Text = "【更新群组】请输入群组或频道用户名(可直接分享或粘贴群组链接)";
+                            message.ReplyMarkup = new { remove_keyboard = true };
+                            await _telegramHttpClient.SendMessage(message);
+                        }
+                        else
+                        {
+                            _eventBus.Publish(new TelegramChatUpdateEvent(@event.Message.FromTGUserId, @event.Message.Text));
+                        }
+                        break;
+                    }
                 case UserCommandType.Join:
-                    message.Text = "请输入群组或者频道用户名";
+                    if (ApplicationDefaults.Commands.Contains(@event.Message.Text))
+                    {
+                        message.Text = "【收录群组】请输入群组或频道用户名(可直接分享或粘贴群组链接)";
+                        message.ReplyMarkup = new { remove_keyboard = true };
+                        await _telegramHttpClient.SendMessage(message);
+                    }
+                    else
+                    {
+                        _eventBus.Publish(new TelegramChatJoinEvent(@event.TGChatId, @event.Message.FromTGUserId, @event.Message.Text));
+                    }
                     break;
                 case UserCommandType.List:
-                    message.Text = @"<a href=""https://t.me/cn_tg_bot"">CN_Bot</a>";
-                    message.ParseMode = nameof(MessageParseModelType.Html);
+                    await HandleCommandList(message, 0);
+                    command.Completed = true;
+                    await _userService.UpdateCommand(command);
                     break;
                 case UserCommandType.MyList:
-                    message.Text = @"<a href=""https://t.me/cn_tg_bot"">CN_Bot</a>";
-                    message.ParseMode = nameof(MessageParseModelType.Html);
+                    await HandleCommandList(message, @event.Message.FromTGUserId);
+                    command.Completed = true;
+                    await _userService.UpdateCommand(command);
                     break;
                 case UserCommandType.Reset:
-                    message.Text = "命令状态已重置";
-                    message.ReplyMarkup = new { remove_keyboard = true };
-                    break;
+                    {
+
+                        message.Text = "命令状态已重置";
+                        message.ReplyMarkup = new { remove_keyboard = true };
+                        command.Completed = true;
+                        await _userService.UpdateCommand(command);
+                        await _telegramHttpClient.SendMessage(message);
+                        break;
+                    }
             }
-            command.Completed = true;
-            await _userService.UpdateCommand(command);
-            await _telegramHttpClient.SendMessage(message);
         }
         private UserCommandType ConvertCommandType(string text)
         {
+            text = text.Replace(ApplicationDefaults.CNBotUserName, string.Empty);
             var command = UserCommandType.None;
             switch (text)
             {
@@ -171,17 +239,29 @@ namespace CNBot.API.Application.EventHandlers
                 case "/join":
                     command = UserCommandType.Join;
                     break;
-                case "/Reset":
-                    command = UserCommandType.Reset;
+                case "/update":
+                    command = UserCommandType.Update;
                     break;
                 case "/remove":
                     command = UserCommandType.Remove;
                     break;
-                case "/update":
-                    command = UserCommandType.Update;
+                case "/reset":
+                    command = UserCommandType.Reset;
                     break;
             }
             return command;
+        }
+
+        private async Task HandleCommandList(TGSendMessageDTO message, long tgUserId = 0)
+        {
+            var paged = _chatService.GetChatsPaged(1, 20, tgUserId, null);
+
+            foreach (var item in paged.Data)
+            {
+                message.Text += $"[👤{item.MembersCount}] {item.Title} \n";
+            }
+
+            await _telegramHttpClient.SendMessage(message);
         }
     }
 }

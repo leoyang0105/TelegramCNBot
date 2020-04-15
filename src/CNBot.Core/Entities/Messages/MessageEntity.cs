@@ -8,7 +8,7 @@
         public int Offset { get; set; }
         public int Length { get; set; }
         public string Url { get; set; }
-        public int? TGUserId { get; set; }
+        public long? TGUserId { get; set; }
         public string Language { get; set; }
     }
 }
