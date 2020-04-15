@@ -23,12 +23,17 @@ namespace CNBot.API.Controllers
             _logger = logger;
             _eventBus = eventBus;
         }
-
+        public IActionResult Get()
+        {
+            _logger.LogInformation("test");
+            return Ok();
+        }
         [HttpPost]
         public IActionResult Post([FromBody]object model)
         {
             try
             {
+                _logger.LogInformation(model.ToString());
                 _eventBus.Publish(new TelegramUpdateEvent { Body = model.ToString() });
             }
             catch (Exception ex)

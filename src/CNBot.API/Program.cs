@@ -3,6 +3,7 @@ using CNBot.Infrastructure;
 using CNBot.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using NLog.Web;
 
 namespace CNBot.API
 {
@@ -20,6 +21,6 @@ namespace CNBot.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseNLog();
     }
 }

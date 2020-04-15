@@ -56,7 +56,7 @@ namespace CNBot.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            NLog.LogManager.Configuration.Variables["connectionString"] = Configuration["DefaultConnection"];
             app.UseRouting();
 
             app.UseAuthorization();
