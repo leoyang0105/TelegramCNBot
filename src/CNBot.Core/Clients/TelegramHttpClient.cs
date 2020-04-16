@@ -12,6 +12,7 @@ namespace CNBot.Core.Clients
 {
     public class TelegramHttpClient : ITelegramHttpClient
     {
+        private const string TG_USER_LINK_PREFIX = "https://t.me/";
         private readonly HttpClient _httpClient;
         private readonly TelegramUrlsConfig _settings;
         public TelegramHttpClient(
@@ -30,6 +31,18 @@ namespace CNBot.Core.Clients
 
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TGResponseDTO<TGChatDTO>>(responseBody);
+        }
+
+        public async Task<TGResponseDTO<TGChatDTO>> GetChatByNameOrLink(string nameOrLink)
+        {
+            if (string.IsNullOrEmpty(nameOrLink))
+                return null;
+            if (!nameOrLink.StartsWith(TG_USER_LINK_PREFIX) && nameOrLink.StartsWith("http"))
+                return null;
+            var username = nameOrLink.Trim();
+            username = username.StartsWith(TG_USER_LINK_PREFIX) ? username.Replace(TG_USER_LINK_PREFIX, string.Empty) : username;
+            username = username.Contains("@") ? username : $"@{username}";
+            return await this.GetChat(username);
         }
         public async Task<TGResponseDTO<int>> GetChatMembersCount(string chatId)
         {

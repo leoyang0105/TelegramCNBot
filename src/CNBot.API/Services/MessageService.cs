@@ -8,6 +8,7 @@ using CNBot.Core.Entities.Messages;
 using CNBot.Core.Entities.Users;
 using CNBot.Core.EventBus.Abstractions;
 using CNBot.Core.Paging;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -68,15 +69,15 @@ namespace CNBot.API.Services
         {
             await _chatService.GetOrCreateChat(dto.Chat, dto.From.Id);
             var user = await _userService.GetOrCreateUser(dto.From);
-            await this.SaveMessage(dto);
-            await this.HandleMessage(dto, user);
+            var message = await this.SaveMessage(dto);
+            await this.HandleMessage(dto, user, message);
         }
         public async Task FeedCallbackQuery(TGCallbackQueryDTO dto)
         {
             await this.HandleCallbackQuery(dto);
             await _telegramHttpClient.AnswerCallbackQuery(dto.Id);
         }
-        public async Task HandleMessage(TGMessageDTO dto, User user)
+        public async Task HandleMessage(TGMessageDTO dto, User user, Message message)
         {
             var chatType = dto.Chat.GetChatType();
             if (chatType != ChatType.Private)
@@ -111,13 +112,16 @@ namespace CNBot.API.Services
                 Completed = false,
                 Type = commandType,
                 UserId = user.Id,
-                Text = dto.Text,
-                TGMessageId = dto.MessageId
+                Text = dto.Text
             };
             await _userService.AddCommand(command);
-            await this.HandleCommand(dto, command);
+            await this.HandleCommand(dto, command, message);
+            if (command.Type != UserCommandType.Remove && dto.Entities != null && dto.Entities.Any())
+            {
+                _eventBus.Publish(new TelegramMessageEntityExtractEvent(dto.Entities));
+            }
         }
-        private async Task HandleCommand(TGMessageDTO dto, UserCommand command)
+        private async Task HandleCommand(TGMessageDTO dto, UserCommand command, Message message)
         {
             switch (command.Type)
             {
@@ -140,8 +144,8 @@ namespace CNBot.API.Services
                         if (ApplicationDefaults.Commands.Contains(dto.Text))
                         {
                             var categories = await _chatService.GetChatCategories();
-                            var message = TGSendMessageDTO.BuildChatCategoriesMessage(dto.Chat.Id, categories.OrderBy(c => c.DisplayOrder).Select(c => c.Name).ToList());
-                            await _telegramHttpClient.SendMessage(message);
+                            var messageRequest = TGSendMessageDTO.BuildChatCategoriesMessage(dto.Chat.Id, categories.OrderBy(c => c.DisplayOrder).Select(c => c.Name).ToList());
+                            await _telegramHttpClient.SendMessage(messageRequest);
                         }
                         else
                         {
@@ -151,8 +155,10 @@ namespace CNBot.API.Services
                                 category = null;
                             }
                             var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, category: category);
-                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
-                            await _telegramHttpClient.SendMessage(message);
+                            var messageRequest = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
+                            var messageResponse = await _telegramHttpClient.SendMessage(messageRequest);
+                            message.ResponseId = messageResponse.Result.MessageId;
+                            await _repository.UpdateAsync(message);
                         }
                         break;
                     }
@@ -192,8 +198,10 @@ namespace CNBot.API.Services
                         else
                         {
                             var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, keywords: dto.Text);
-                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
-                            await _telegramHttpClient.SendMessage(message);
+                            var messageRequest = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
+                            await _telegramHttpClient.SendMessage(messageRequest);
+                            var messageResponse = await _telegramHttpClient.SendMessage(messageRequest);
+                            await _repository.UpdateAsync(message);
                         }
                         break;
                     }
@@ -206,8 +214,9 @@ namespace CNBot.API.Services
             {
                 return;
             }
-            var command = await _userService.FindLastCommand(dto.From.Id, queryData.MessageId);
-            if (command == null)
+            var command = await _userService.FindLastCommandByTGUserId(dto.From.Id);
+            var message = await _repository.TableNoTracking.FirstOrDefaultAsync(s => s.TGMessageId == queryData.MessageId);
+            if (command == null || message == null)
                 return;
             if (command.Type == UserCommandType.List)
             {
@@ -216,10 +225,10 @@ namespace CNBot.API.Services
                 {
                     category = null;
                 }
-                
+
                 var paged = _chatService.GetChatsPaged(pagedIndex: queryData.PageIndex, pageSize: 20, category: category);
-                var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Message.Chat.Id, queryData.MessageId);
-                var editedMessage = TGSendMessageDTO.BuildChatListEditMessage(message, queryData.MessageId);
+                var messageDTO = TGSendMessageDTO.BuildChatListMessage(paged, dto.Message.Chat.Id, queryData.MessageId);
+                var editedMessage = TGSendMessageDTO.BuildChatListEditMessage(messageDTO, message.ResponseId);
                 await _telegramHttpClient.EditMessage(editedMessage);
             }
         }

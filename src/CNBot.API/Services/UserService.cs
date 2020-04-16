@@ -55,10 +55,10 @@ namespace CNBot.API.Services
             await _userCommandRepository.AddAsync(command);
         }
 
-        public async Task<UserCommand> FindLastCommand(long tgUserId, long tgMessageId)
+        public async Task<UserCommand> FindLastCommandByTGUserId(long tgUserId)
         {
             return await _userCommandRepository.TableNoTracking.OrderByDescending(s => s.Created)
-                .FirstOrDefaultAsync(c => c.User.TGUserId == tgUserId && c.TGMessageId == tgMessageId);
+                .FirstOrDefaultAsync(c => c.User.TGUserId == tgUserId);
         }
     }
 }

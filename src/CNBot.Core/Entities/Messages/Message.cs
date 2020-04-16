@@ -13,6 +13,7 @@ namespace CNBot.Core.Entities.Messages
         public long FromTGUserId { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
+        public long ResponseId { get; set; }
         public ICollection<MessageEntity> MessageEntities
         {
             get => _messageEntities ?? (_messageEntities = new List<MessageEntity>());

@@ -8,7 +8,7 @@ namespace CNBot.API.Services
     {
         Task AddCommand(UserCommand command);
         Task<UserCommand> FindLastCommand(long userId);
-        Task<UserCommand> FindLastCommand(long tgUserId, long tgMessageId);
+        Task<UserCommand> FindLastCommandByTGUserId(long tgUserId);
         Task<User> GetOrCreateUser(TGUserDTO dto);
         Task CompleteCommand(UserCommand command);
     }

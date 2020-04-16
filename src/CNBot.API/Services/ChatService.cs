@@ -97,10 +97,18 @@ namespace CNBot.API.Services
             }
             if (!string.IsNullOrEmpty(category))
             {
+                if (category.Length > 100)
+                {
+                    category = category.Substring(0, 99);
+                }
                 query = query.Where(q => q.ChatCategories.Any(c => c.Category.Name == category));
             }
             if (!string.IsNullOrEmpty(keywords))
             {
+                if (keywords.Length > 100)
+                {
+                    keywords = keywords.Substring(0, 99);
+                }
                 query = query.Where(q => q.Description.Contains(keywords) || q.Title.Contains(keywords) || q.UserName.Contains(keywords));
             }
             return new PagedResult<Chat>(query.OrderByDescending(q => q.MembersCount).ThenBy(q => q.Id), pagedIndex, pageSize);

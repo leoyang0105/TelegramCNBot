@@ -31,10 +31,7 @@ namespace CNBot.API.Application.EventHandling
         {
             try
             {
-                var username = @event.ChatUserName.Trim();
-                username = username.StartsWith("https://t.me/") ? username.Replace("https://t.me/", string.Empty) : username;
-                username = username.Contains("@") ? username : $"@{username}";
-                var chatResponse = await _telegramHttpClient.GetChat(username);
+                var chatResponse = await _telegramHttpClient.GetChatByNameOrLink(@event.ChatUserName);
                 var message = new TGSendMessageDTO
                 {
                     ChatId = @event.TgChatId

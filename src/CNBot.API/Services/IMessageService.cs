@@ -10,7 +10,7 @@ namespace CNBot.API.Services
         Task FeedCallbackQuery(TGCallbackQueryDTO dto);
         Task FeedMessage(TGMessageDTO dto);
         Task HandleCallbackQuery(TGCallbackQueryDTO dto);
-        Task HandleMessage(TGMessageDTO dto, User user);
+        Task HandleMessage(TGMessageDTO dto, User user, Message message);
         Task<Message> SaveMessage(TGMessageDTO dto);
     }
 }

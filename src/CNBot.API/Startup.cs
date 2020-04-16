@@ -48,6 +48,7 @@ namespace CNBot.API
             services.AddTransient<TelegramChatJoinEventHandler>();
             services.AddTransient<TelegramChatUpdateEventHandler>();
             services.AddTransient<TelegramChatRemoveEventHandler>();
+            services.AddTransient<TelegramMessageEntityExtractEventHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +79,7 @@ namespace CNBot.API
             eventBus.Subscribe<TelegramChatJoinEvent, TelegramChatJoinEventHandler>();
             eventBus.Subscribe<TelegramChatUpdateEvent, TelegramChatUpdateEventHandler>();
             eventBus.Subscribe<TelegramChatRemoveEvent, TelegramChatRemoveEventHandler>();
+            eventBus.Subscribe<TelegramMessageEntityExtractEvent, TelegramMessageEntityExtractEventHandler>();
 
         }
         private void RegisterTelegramHttpClients(IServiceCollection services)

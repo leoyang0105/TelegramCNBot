@@ -75,13 +75,13 @@ namespace CNBot.Core.Dtos
                             Text = paged.PageIndex == 1 ? "首页" : "上一页",
                             CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
                             {
-                                PageIndex = paged.PageIndex == 1? 1 : paged.PageIndex - 1,
+                                PageIndex = paged.PageIndex == 1 ? 0 : paged.PageIndex - 1,
                                 MessageId = messageId
                             })
                         },
                           new TGInlineKeyboardMarkup.InlineKeyboardButton
                           {
-                              Text = $"第{paged.PageIndex}页",
+                              Text = $"第{paged.PageIndex}页,共{paged.TotalPages}页",
                               CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
                             {
                                 PageIndex = 0,
@@ -90,10 +90,10 @@ namespace CNBot.Core.Dtos
                           },
                         new TGInlineKeyboardMarkup.InlineKeyboardButton
                         {
-                            Text = paged.PageIndex == paged.TotalPages ? "已是尾页" : "下一页",
+                            Text = paged.PageIndex == paged.TotalPages ? "尾页" : "下一页",
                             CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
                             {
-                                PageIndex = paged.PageIndex == paged.TotalPages ? paged.PageIndex : paged.PageIndex + 1,
+                                PageIndex = paged.PageIndex == paged.TotalPages ? 0 : paged.PageIndex + 1,
                                 MessageId = messageId
                             })
                         }
