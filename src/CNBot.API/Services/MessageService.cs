@@ -199,7 +199,6 @@ namespace CNBot.API.Services
                         {
                             var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, keywords: dto.Text);
                             var messageRequest = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
-                            await _telegramHttpClient.SendMessage(messageRequest);
                             var messageResponse = await _telegramHttpClient.SendMessage(messageRequest);
                             await _repository.UpdateAsync(message);
                         }

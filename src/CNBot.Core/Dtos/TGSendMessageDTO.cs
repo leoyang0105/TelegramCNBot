@@ -81,7 +81,7 @@ namespace CNBot.Core.Dtos
                         },
                           new TGInlineKeyboardMarkup.InlineKeyboardButton
                           {
-                              Text = $"第{paged.PageIndex}页,共{paged.TotalPages}页",
+                              Text = $"第{paged.PageIndex}页",
                               CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
                             {
                                 PageIndex = 0,

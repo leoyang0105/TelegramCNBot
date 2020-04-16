@@ -34,13 +34,17 @@ namespace CNBot.API.Application.EventHandling
             try
             {
                 var list = @event.Entities.Where(e => e.GetEntityType() == MessageEntityType.text_link).ToList();
-                while (list.Any())
+                foreach(var entity in list)
                 {
-                    var entities = list.Take(ApplicationDefaults.ConcurrentTaskCount).ToList();
-                    var tasks = entities.Select(entity => this.HandleUrlEntity(entity));
-                    entities.ForEach(entity => list.Remove(entity));
-                    await Task.WhenAll(tasks);
+                    await this.HandleUrlEntity(entity);
                 }
+                //while (list.Any())
+                //{
+                //    var entities = list.Take(ApplicationDefaults.ConcurrentTaskCount).ToList();
+                //    var tasks = entities.Select(entity => this.HandleUrlEntity(entity));
+                //    entities.ForEach(entity => list.Remove(entity));
+                //    await Task.WhenAll(tasks);
+                //}
             }
             catch (Exception ex)
             {
