@@ -42,22 +42,17 @@ namespace CNBot.API.Services
             var chat = await this.GetByTGChatId(dto.Id);
             if (chat == null)
             {
-                var chatResponse = await _telegramHttpClient.GetChat(dto.Id.ToString());
-                if (!chatResponse.IsOK)
-                {
-                    throw new Exception($"Telegram request failed {chatResponse.ErrorCode}. {chatResponse.Description}");
-                }
                 var utcNow = DateTime.UtcNow;
                 chat = new Chat
                 {
-                    ChatType = chatResponse.Result.GetChatType(),
+                    ChatType = dto.GetChatType(),
                     Created = utcNow,
-                    Description = chatResponse.Result.Description,
-                    TGChatId = chatResponse.Result.Id,
-                    Title = chatResponse.Result.Title,
+                    Description = dto.Description,
+                    TGChatId = dto.Id,
+                    Title = dto.Title,
                     Updated = utcNow,
-                    UserName = chatResponse.Result.Username,
-                    InviteLink = chatResponse.Result.InviteLink
+                    UserName = dto.Username,
+                    InviteLink = dto.InviteLink
                 };
                 await _chatRepository.AddAsync(chat);
                 _eventBus.Publish(new TelegramChatRefreshEvent(chat.Id, tgUserId));

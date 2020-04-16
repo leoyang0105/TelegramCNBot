@@ -1,0 +1,17 @@
+﻿INSERT INTO cnbot.category (Name,Description,Created,DisplayOrder,Published) VALUES
+('编程',null, sysdate(),1,1),
+('软件',null, sysdate(),2,1),
+('硬件',null, sysdate(),3,1),
+('闲聊',null, sysdate(),4,1),
+('交友',null, sysdate(),5,1),
+('同城',null, sysdate(),6,1),
+('财经',null, sysdate(),7,1),
+('政治',null, sysdate(),8,1),
+('社会',null, sysdate(),9,1),
+('科学',null, sysdate(),10,1),
+('文学',null, sysdate(),11,1),
+('艺术',null, sysdate(),12,1),
+('音乐',null, sysdate(),13,1),
+('影视',null, sysdate(),14,1),
+('游戏',null, sysdate(),15,1),
+('NSFW',null, sysdate(),16,1)

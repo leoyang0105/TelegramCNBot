@@ -11,8 +11,8 @@ namespace CNBot.Infrastructure.EntityTypeConfigurations.Users
         {
             builder.ToTable("user");
             builder.Property(x => x.UserName).HasMaxLength(128);
-            builder.Property(x => x.FirstName).HasMaxLength(256);
-            builder.Property(x => x.LastName).HasMaxLength(256);
+            builder.Property(x => x.FirstName).HasMaxLength(256).HasCharSet("utf8mb4").HasCollation("utf8mb4_unicode_ci");
+            builder.Property(x => x.LastName).HasMaxLength(256).HasCharSet("utf8mb4").HasCollation("utf8mb4_unicode_ci");
             builder.Property(x => x.LanguageCode).HasMaxLength(4000);
             builder.HasIndex(x => x.TGUserId).IsUnique();
         }

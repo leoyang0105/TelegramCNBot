@@ -29,41 +29,48 @@ namespace CNBot.API.Application.EventHandling
         }
         public async Task Handle(TelegramChatJoinEvent @event)
         {
-            var username = @event.ChatUserName.Trim();
-            username = username.StartsWith("https://t.me/") ? username.Replace("https://t.me/", string.Empty) : username;
-            username = username.Contains("@") ? username : $"@{username}";
-            var chatResponse = await _telegramHttpClient.GetChat(username);
-            var message = new TGSendMessageDTO
+            try
             {
-                ChatId = @event.TgChatId
-            };
-            if (chatResponse.IsOK)
-            {
-                var type = chatResponse.Result.GetChatType();
-                if (type == ChatType.Private || type == ChatType.None)
+                var username = @event.ChatUserName.Trim();
+                username = username.StartsWith("https://t.me/") ? username.Replace("https://t.me/", string.Empty) : username;
+                username = username.Contains("@") ? username : $"@{username}";
+                var chatResponse = await _telegramHttpClient.GetChat(username);
+                var message = new TGSendMessageDTO
                 {
-                    message.Text = "用户名仅支持群组或频道";
-                }
-                else
+                    ChatId = @event.TgChatId
+                };
+                if (chatResponse.IsOK)
                 {
-                    var chat = await _chatService.GetByTGChatId(chatResponse.Result.Id);
-                    if (chat == null)
+                    var type = chatResponse.Result.GetChatType();
+                    if (type == ChatType.Private || type == ChatType.None)
                     {
-                        chat = await _chatService.GetOrCreateChat(chatResponse.Result, @event.TgUserId);
-                        message.Text = $"【{chatResponse.Result.Title}】 收录成功！ 你可以继续输入其他群组用户名";
-                        _eventBus.Publish(new TelegramChatRefreshEvent(chat.Id));
+                        message.Text = "用户名仅支持群组或频道";
                     }
                     else
                     {
-                        message.Text = "此群组已经收录过了，请勿重复操作！";
+                        var chat = await _chatService.GetByTGChatId(chatResponse.Result.Id);
+                        if (chat == null)
+                        {
+                            chat = await _chatService.GetOrCreateChat(chatResponse.Result, @event.TgUserId);
+                            message.Text = $"【{chatResponse.Result.Title}】 收录成功！ 你可以继续输入其他群组用户名";
+                            _eventBus.Publish(new TelegramChatRefreshEvent(chat.Id));
+                        }
+                        else
+                        {
+                            message.Text = "此群组已经收录过了，请勿重复操作！";
+                        }
                     }
                 }
+                else
+                {
+                    message.Text = "未能找到群组或者频道";
+                }
+                await _telegramHttpClient.SendMessage(message);
             }
-            else
+            catch (Exception ex)
             {
-                message.Text = "未能找到群组或者频道";
+                _logger.LogError(ex, "添加群组失败");
             }
-            await _telegramHttpClient.SendMessage(message);
         }
     }
 }

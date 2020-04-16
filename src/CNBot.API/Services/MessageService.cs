@@ -145,7 +145,7 @@ namespace CNBot.API.Services
                         else
                         {
                             var category = dto.Text;
-                            if (!string.IsNullOrWhiteSpace(category) && category == "全部群组")
+                            if (!string.IsNullOrWhiteSpace(category) && category.StartsWith("全部群组", StringComparison.OrdinalIgnoreCase))
                             {
                                 category = null;
                             }
@@ -186,13 +186,13 @@ namespace CNBot.API.Services
                     {
                         if (ApplicationDefaults.Commands.Contains(dto.Text))
                         {
-                            var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, keywords: dto.Text);
-                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id);
-                            await _telegramHttpClient.SendMessage(message);
+                            await _telegramHttpClient.SendMessage(TGSendMessageDTO.BuildChatSearchMessage(dto.Chat.Id));
                         }
                         else
                         {
-                            await _telegramHttpClient.SendMessage(TGSendMessageDTO.BuildChatSearchMessage(dto.Chat.Id));
+                            var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, keywords: dto.Text);
+                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id);
+                            await _telegramHttpClient.SendMessage(message);
                         }
                         break;
                     }

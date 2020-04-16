@@ -41,25 +41,31 @@ namespace CNBot.Core.Dtos
                 DisableWebPagePreview = true,
                 ParseMode = nameof(MessageParseModelType.Html)
             };
-            foreach (var item in paged.Data)
+            if (paged.Data == null || !paged.Data.Any())
             {
-                if (item.ChatType == ChatType.Channel)
-                {
-                    dto.Text += $"📢|👤{item.MembersCount}| <a href=\"https://t.me/{item.UserName}\">{item.Title}</a>\n";
-                }
-                else if (item.ChatType == ChatType.SuperGroup)
-                {
-                    dto.Text += $"👥|👤{item.MembersCount}| <a href=\"https://t.me/{item.UserName}\">{item.Title}</a>\n";
-                }
-                else if (item.ChatType == ChatType.Group)
-                {
-                    dto.Text += $"🔒|👤{item.MembersCount}| <a href=\"{item.InviteLink}\">{item.Title}</a>\n";
-                }
+                dto.Text = "暂无数据，群组数据将持续完善";
             }
-            var pager = new TGInlineKeyboardMarkup
+            else
             {
-                InlineKeyboard = new[]
+                foreach (var item in paged.Data)
                 {
+                    if (item.ChatType == ChatType.Channel)
+                    {
+                        dto.Text += $"📢|👤{item.MembersCount}| <a href=\"https://t.me/{item.UserName}\">{item.Title}</a>\n";
+                    }
+                    else if (item.ChatType == ChatType.SuperGroup)
+                    {
+                        dto.Text += $"👥|👤{item.MembersCount}| <a href=\"https://t.me/{item.UserName}\">{item.Title}</a>\n";
+                    }
+                    else if (item.ChatType == ChatType.Group)
+                    {
+                        dto.Text += $"🔒|👤{item.MembersCount}| <a href=\"{item.InviteLink}\">{item.Title}</a>\n";
+                    }
+                }
+                var pager = new TGInlineKeyboardMarkup
+                {
+                    InlineKeyboard = new[]
+                    {
                     new List<TGInlineKeyboardMarkup.InlineKeyboardButton>()
                     {
                         new TGInlineKeyboardMarkup.InlineKeyboardButton
@@ -79,8 +85,9 @@ namespace CNBot.Core.Dtos
                         }
                     }
                 }
-            };
-            dto.ReplyMarkup = pager;
+                };
+                dto.ReplyMarkup = pager;
+            }
             return dto;
         }
         public static TGSendMessageDTO BuildChatCategoriesMessage(long chatId, List<string> categories)
@@ -88,13 +95,13 @@ namespace CNBot.Core.Dtos
             var replyMarkup = new TGReplyKeyboardMarkup
             {
                 OneTimeKeyboard = true,
-                Keyboard = new[]
+                Keyboard = new List<List<TGReplyKeyboardMarkup.KeyboardButton>>
                     {
                         new List<TGReplyKeyboardMarkup.KeyboardButton>()
                         {
                             new TGReplyKeyboardMarkup.KeyboardButton
                             {
-                               Text = "全部群组"
+                               Text = "全部群组 | 排行榜"
                             }
                         }
                     }
@@ -113,7 +120,7 @@ namespace CNBot.Core.Dtos
                         });
                         categories.Remove(text);
                     });
-                    replyMarkup.Keyboard.Append(menus);
+                    replyMarkup.Keyboard.Add(menus);
                 }
             }
             return new TGSendMessageDTO
@@ -211,7 +218,7 @@ namespace CNBot.Core.Dtos
     {
 
         [JsonProperty("keyboard")]
-        public List<KeyboardButton>[] Keyboard { get; set; }
+        public List<List<KeyboardButton>> Keyboard { get; set; }
         [JsonProperty("resize_keyboard")]
         public bool ResizeKeyboard { get; set; }
         [JsonProperty("one_time_keyboard")]
