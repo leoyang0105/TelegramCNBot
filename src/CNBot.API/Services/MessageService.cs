@@ -211,7 +211,13 @@ namespace CNBot.API.Services
                 return;
             if (command.Type == UserCommandType.List)
             {
-                var paged = _chatService.GetChatsPaged(pagedIndex: queryData.PageIndex, pageSize: 20, category: command.Text);
+                var category = command.Text;
+                if (!string.IsNullOrWhiteSpace(category) && category.StartsWith("全部群组", StringComparison.OrdinalIgnoreCase))
+                {
+                    category = null;
+                }
+                
+                var paged = _chatService.GetChatsPaged(pagedIndex: queryData.PageIndex, pageSize: 20, category: category);
                 var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Message.Chat.Id, queryData.MessageId);
                 var editedMessage = TGSendMessageDTO.BuildChatListEditMessage(message, queryData.MessageId);
                 await _telegramHttpClient.EditMessage(editedMessage);
