@@ -3,6 +3,7 @@ using CNBot.Core.Paging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using static CNBot.Core.Dtos.TGCallbackQueryDTO;
 
 namespace CNBot.Core.Dtos
 {
@@ -33,7 +34,7 @@ namespace CNBot.Core.Dtos
                 Text = message.Text
             };
         }
-        public static TGSendMessageDTO BuildChatListMessage(IPagedResult<Chat> paged, long chatId)
+        public static TGSendMessageDTO BuildChatListMessage(IPagedResult<Chat> paged, long chatId, long messageId)
         {
             var dto = new TGSendMessageDTO
             {
@@ -62,6 +63,7 @@ namespace CNBot.Core.Dtos
                         dto.Text += $"🔒|👤{item.MembersCount}| <a href=\"{item.InviteLink}\">{item.Title}</a>\n";
                     }
                 }
+
                 var pager = new TGInlineKeyboardMarkup
                 {
                     InlineKeyboard = new[]
@@ -71,20 +73,32 @@ namespace CNBot.Core.Dtos
                         new TGInlineKeyboardMarkup.InlineKeyboardButton
                         {
                             Text = paged.PageIndex == 1 ? "首页" : "上一页",
-                            CallbackData = paged.PageIndex == 1 ? "1" : (paged.PageIndex - 1).ToString()
+                            CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
+                            {
+                                PageIndex = paged.PageIndex == 1? 1 : paged.PageIndex - 1,
+                                MessageId = messageId
+                            })
                         },
                           new TGInlineKeyboardMarkup.InlineKeyboardButton
-                        {
-                            Text =$"第{paged.PageIndex}页",
-                            CallbackData = paged.PageIndex == 1 ? "1" : (paged.PageIndex - 1).ToString()
-                        },
+                          {
+                              Text = $"第{paged.PageIndex}页",
+                              CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
+                            {
+                                PageIndex = 0,
+                                MessageId = messageId
+                            })
+                          },
                         new TGInlineKeyboardMarkup.InlineKeyboardButton
                         {
                             Text = paged.PageIndex == paged.TotalPages ? "已是尾页" : "下一页",
-                            CallbackData = paged.PageIndex ==paged.TotalPages ? paged.PageIndex.ToString()  : (paged.PageIndex + 1).ToString()
+                            CallbackData = JsonConvert.SerializeObject(new TGCallbackQueryDataDTO
+                            {
+                                PageIndex = paged.PageIndex == paged.TotalPages ? paged.PageIndex : paged.PageIndex + 1,
+                                MessageId = messageId
+                            })
                         }
                     }
-                }
+    }
                 };
                 dto.ReplyMarkup = pager;
             }

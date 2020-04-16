@@ -21,5 +21,13 @@ namespace CNBot.Core.Dtos
         public string ChatInstance { get; set; }
         [JsonProperty("data")]
         public string Data { get; set; }
+        public class TGCallbackQueryDataDTO
+        {
+
+            [JsonProperty("message_id")]
+            public long MessageId { get; set; }
+            [JsonProperty("page_index")]
+            public int PageIndex { get; set; }
+        }
     }
 }

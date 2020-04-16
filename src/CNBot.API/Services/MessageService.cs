@@ -8,6 +8,7 @@ using CNBot.Core.Entities.Messages;
 using CNBot.Core.Entities.Users;
 using CNBot.Core.EventBus.Abstractions;
 using CNBot.Core.Paging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -150,7 +151,7 @@ namespace CNBot.API.Services
                                 category = null;
                             }
                             var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, category: category);
-                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id);
+                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
                             await _telegramHttpClient.SendMessage(message);
                         }
                         break;
@@ -191,7 +192,7 @@ namespace CNBot.API.Services
                         else
                         {
                             var paged = _chatService.GetChatsPaged(pagedIndex: 1, pageSize: 20, keywords: dto.Text);
-                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id);
+                            var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Chat.Id, dto.MessageId);
                             await _telegramHttpClient.SendMessage(message);
                         }
                         break;
@@ -200,21 +201,23 @@ namespace CNBot.API.Services
         }
         public async Task HandleCallbackQuery(TGCallbackQueryDTO dto)
         {
-            var command = await _userService.FindLastCommand(dto.From.Id, dto.Message.MessageId);
+            var command = await _userService.FindLastCommand(dto.From.Id);
             if (command == null)
                 return;
             if (command.Type == UserCommandType.List)
             {
-                int pagedIndex;
-                var parsed = int.TryParse(dto.Data, out pagedIndex);
-                if (!parsed)
+                var queryData = JsonConvert.DeserializeObject<TGCallbackQueryDTO.TGCallbackQueryDataDTO>(dto.Data);
+                if (queryData.PageIndex == 0)
                 {
-                    pagedIndex = 1;
+                    return;
                 }
-                var paged = _chatService.GetChatsPaged(pagedIndex: pagedIndex, pageSize: 20, category: command.Text);
-                var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Message.Chat.Id);
-                var editedMessage = TGSendMessageDTO.BuildChatListEditMessage(message, dto.Message.MessageId);
-                await _telegramHttpClient.EditMessage(editedMessage);
+                else
+                {
+                    var paged = _chatService.GetChatsPaged(pagedIndex: queryData.PageIndex, pageSize: 20, category: command.Text);
+                    var message = TGSendMessageDTO.BuildChatListMessage(paged, dto.Message.Chat.Id, queryData.MessageId);
+                    var editedMessage = TGSendMessageDTO.BuildChatListEditMessage(message, queryData.MessageId);
+                    await _telegramHttpClient.EditMessage(editedMessage);
+                }
             }
         }
     }
