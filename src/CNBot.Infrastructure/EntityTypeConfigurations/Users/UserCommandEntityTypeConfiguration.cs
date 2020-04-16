@@ -1,9 +1,6 @@
 ﻿using CNBot.Core.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CNBot.Infrastructure.EntityTypeConfigurations.Users
 {
@@ -13,6 +10,7 @@ namespace CNBot.Infrastructure.EntityTypeConfigurations.Users
         {
             builder.ToTable("user_command");
             builder.HasOne(x => x.User).WithMany().HasForeignKey(s => s.UserId);
+            builder.Property(x => x.Text).HasMaxLength(4096);
         }
     }
 }

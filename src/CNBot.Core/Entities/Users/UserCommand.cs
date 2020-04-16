@@ -12,5 +12,7 @@ namespace CNBot.Core.Entities.Users
         /// 命令已经处理
         /// </summary>
         public bool Completed { get; set; }
+        public long TGMessageId { get; set;}
+        public string Text { get; set; }
     }
 }

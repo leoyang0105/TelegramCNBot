@@ -10,5 +10,7 @@ namespace CNBot.Core.Clients
         Task<TGResponseDTO<List<TGChatMemberDTO>>> GetChatAdministrators(string chatId);
         Task<TGResponseDTO<int>> GetChatMembersCount(string chatId);
         Task<TGResponseDTO<TGMessageDTO>> SendMessage(TGSendMessageDTO dto);
+        Task<TGResponseDTO<TGMessageDTO>> EditMessage(TGEditMessageTextDTO dto);
+        Task<TGResponseDTO<object>> AnswerCallbackQuery(string callbackQueryId);
     }
 }

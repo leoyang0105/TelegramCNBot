@@ -63,6 +63,37 @@ namespace CNBot.Core.Clients
             var responseBody = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TGResponseDTO<TGMessageDTO>>(responseBody);
         }
+
+        public async Task<TGResponseDTO<TGMessageDTO>> EditMessage(TGEditMessageTextDTO dto)
+        {
+            var url = TelegramUrlsConfig.Message.EditText(_settings.ApiToken);
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = new StringContent(JsonConvert.SerializeObject(dto, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }), Encoding.UTF8, ApplicationDefaults.DefaultContentType);
+            var response = await _httpClient.SendAsync(request);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TGResponseDTO<TGMessageDTO>>(responseBody);
+        }
+        public async Task<TGResponseDTO<object>> AnswerCallbackQuery(string callbackQueryId)
+        {
+            var url = TelegramUrlsConfig.Message.AnswerCallbackQuery(_settings.ApiToken);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Content = new StringContent(JsonConvert.SerializeObject(new { callback_query_id = callbackQueryId },
+                new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                }), Encoding.UTF8, ApplicationDefaults.DefaultContentType);
+            var response = await _httpClient.SendAsync(request);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TGResponseDTO<object>>(responseBody);
+        }
         #endregion
     }
 }

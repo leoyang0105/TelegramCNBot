@@ -6,7 +6,7 @@ namespace CNBot.Core
 {
     public static class ApplicationDefaults
     {
-        public static string[] Commands => new[] { "/help", "/list", "/mylist", "/join", "/update", "/remove", "/reset" };
+        public static string[] Commands => new[] { "/help", "/list", "/join", "/search", "/mylist", "/update", "/remove", "/reset" };
         public static string CNBotUserName => "@CN_TG_BOT";
         public static string DefaultContentType => "application/json";
         public static string TelegramApiEndpoint => "https://api.telegram.org";

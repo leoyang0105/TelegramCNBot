@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using CNBot.Core.Entities.Messages;
+using CNBot.Core.Entities.Users;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace CNBot.Core.Dtos
 {
@@ -49,5 +52,49 @@ namespace CNBot.Core.Dtos
 
         [JsonProperty("reply_markup")]
         public object ReplyMarkup { get; set; }
+
+        public UserCommandType GetCommandType()
+        {
+            var text = this.Text;
+            var command = UserCommandType.None;
+            if (this.Entities == null || !this.Entities.Any(s => s.Type.Equals(nameof(MessageEntityType.bot_command))))
+            {
+                return command;
+            }
+            if (!text.StartsWith("/") || !ApplicationDefaults.Commands.Contains(text))
+            {
+                return command;
+            }
+            text = text.Replace(ApplicationDefaults.CNBotUserName, string.Empty);
+            switch (text)
+            {
+                case "/help":
+                    command = UserCommandType.Help;
+                    break;
+                case "/list":
+                    command = UserCommandType.List;
+                    break;
+                case "/join":
+                    command = UserCommandType.Join;
+                    break;
+                case "/search":
+                    command = UserCommandType.Search;
+                    break;
+                case "/mylist":
+                    command = UserCommandType.MyList;
+                    break;
+
+                case "/update":
+                    command = UserCommandType.Update;
+                    break;
+                case "/remove":
+                    command = UserCommandType.Remove;
+                    break;
+                case "/reset":
+                    command = UserCommandType.Reset;
+                    break;
+            }
+            return command;
+        }
     }
 }

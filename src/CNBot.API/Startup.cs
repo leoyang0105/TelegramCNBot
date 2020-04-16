@@ -2,10 +2,10 @@ using System;
 using System.Net.Http;
 using CNBot.API.Application.EventHandling;
 using CNBot.API.Application.Events;
+using CNBot.API.Services;
 using CNBot.Core.Clients;
 using CNBot.Core.Configurations;
 using CNBot.Core.EventBus.Abstractions;
-using CNBot.Core.Services;
 using CNBot.Infrastructure;
 using CNBot.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -40,9 +40,10 @@ namespace CNBot.API
 
             services.AddScoped<IChatService, ChatService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMessageService, MessageService>();
             services.AddTransient<TelegramChatRefreshEventHandler>();
             services.AddTransient<TelegramMessageEventHandler>();
-            services.AddTransient<TelegramUpdateEventHandler>();
+            services.AddTransient<TelegramCallbackQueryEventHandler>();
 
             services.AddTransient<TelegramChatJoinEventHandler>();
             services.AddTransient<TelegramChatUpdateEventHandler>();
@@ -72,7 +73,7 @@ namespace CNBot.API
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.Subscribe<TelegramChatRefreshEvent, TelegramChatRefreshEventHandler>();
             eventBus.Subscribe<TelegramMessageEvent, TelegramMessageEventHandler>();
-            eventBus.Subscribe<TelegramUpdateEvent, TelegramUpdateEventHandler>();
+            eventBus.Subscribe<TelegramCallbackQueryEvent, TelegramCallbackQueryEventHandler>();
 
             eventBus.Subscribe<TelegramChatJoinEvent, TelegramChatJoinEventHandler>();
             eventBus.Subscribe<TelegramChatUpdateEvent, TelegramChatUpdateEventHandler>();

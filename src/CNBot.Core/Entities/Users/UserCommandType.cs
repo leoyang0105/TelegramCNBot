@@ -5,8 +5,9 @@
         None,
         Help,
         List,
-        MyList,
         Join,
+        Search,
+        MyList,
         Remove,
         Reset,
         Update

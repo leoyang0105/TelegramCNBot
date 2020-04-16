@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CNBot.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200415023753_changIntToLong")]
-    partial class changIntToLong
+    [Migration("20200416082824_Initialize")]
+    partial class Initialize
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,6 +18,35 @@ namespace CNBot.Infrastructure.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("CNBot.Core.Entities.Chats.Category", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("varchar(128) CHARACTER SET utf8")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(32) CHARACTER SET utf8")
+                        .HasMaxLength(32);
+
+                    b.Property<bool>("Published")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("category");
+                });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.Chat", b =>
                 {
@@ -31,9 +60,16 @@ namespace CNBot.Infrastructure.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<long>("CreatorId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Description")
                         .HasColumnType("longtext CHARACTER SET utf8")
                         .HasMaxLength(4000);
+
+                    b.Property<string>("InviteLink")
+                        .HasColumnType("varchar(512) CHARACTER SET utf8")
+                        .HasMaxLength(512);
 
                     b.Property<int>("MembersCount")
                         .HasColumnType("int");
@@ -58,6 +94,27 @@ namespace CNBot.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("chat");
+                });
+
+            modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ChatId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ChatId");
+
+                    b.ToTable("chat_category");
                 });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatMember", b =>
@@ -208,6 +265,10 @@ namespace CNBot.Infrastructure.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext CHARACTER SET utf8")
+                        .HasMaxLength(4096);
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -219,6 +280,21 @@ namespace CNBot.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_command");
+                });
+
+            modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatCategory", b =>
+                {
+                    b.HasOne("CNBot.Core.Entities.Chats.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CNBot.Core.Entities.Chats.Chat", "Chat")
+                        .WithMany("ChatCategories")
+                        .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatMember", b =>

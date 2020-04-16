@@ -1,9 +1,9 @@
 ﻿using CNBot.API.Application.Events;
+using CNBot.API.Services;
 using CNBot.Core;
 using CNBot.Core.Clients;
 using CNBot.Core.Entities.Chats;
 using CNBot.Core.EventBus.Abstractions;
-using CNBot.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;

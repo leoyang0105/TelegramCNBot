@@ -18,6 +18,7 @@ namespace CNBot.Core.Entities.Chats
         /// Telegram user Id
         /// </summary>
         public long CreatorId { get; set; }
+        public string InviteLink { get; set; }
         public ICollection<ChatCategory> ChatCategories
         {
             get => _chatCategories ?? (_chatCategories = new List<ChatCategory>());

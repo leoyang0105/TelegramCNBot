@@ -1,13 +1,11 @@
 ﻿using CNBot.API.Application.Events;
+using CNBot.API.Services;
 using CNBot.Core.Clients;
 using CNBot.Core.Dtos;
 using CNBot.Core.Entities.Chats;
 using CNBot.Core.EventBus.Abstractions;
-using CNBot.Core.Services;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CNBot.API.Application.EventHandling
@@ -51,24 +49,13 @@ namespace CNBot.API.Application.EventHandling
                     var chat = await _chatService.GetByTGChatId(chatResponse.Result.Id);
                     if (chat == null)
                     {
+                        chat = await _chatService.GetOrCreateChat(chatResponse.Result, @event.TgUserId);
                         message.Text = $"【{chatResponse.Result.Title}】 收录成功！ 你可以继续输入其他群组用户名";
-                        var utcNow = DateTime.UtcNow;
-                        chat = new Chat()
-                        {
-                            Created = utcNow,
-                            Description = chatResponse.Result.Description,
-                            TGChatId = chatResponse.Result.Id,
-                            Title = chatResponse.Result.Title,
-                            UserName = chatResponse.Result.Username,
-                            Updated = utcNow,
-                            ChatType = type,
-                        };
-                        await _chatService.CreateChat(chat);
                         _eventBus.Publish(new TelegramChatRefreshEvent(chat.Id));
                     }
                     else
                     {
-                        message.Text = "此群组已经收录过了，请勿重复操作！ \n 如果本次操作是群主，将自动更改归属权至群主！";
+                        message.Text = "此群组已经收录过了，请勿重复操作！";
                     }
                 }
             }

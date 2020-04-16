@@ -15,6 +15,7 @@ namespace CNBot.Infrastructure.EntityTypeConfigurations.Chats
             builder.Property(x => x.Title).HasMaxLength(256);
             builder.Property(x => x.UserName).HasMaxLength(128);
             builder.Property(x => x.Description).HasMaxLength(4000);
+            builder.Property(x => x.InviteLink).HasMaxLength(512);
             builder.HasIndex(x => x.TGChatId).IsUnique();
         }
     }

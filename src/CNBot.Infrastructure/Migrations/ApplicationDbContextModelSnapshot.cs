@@ -27,14 +27,23 @@ namespace CNBot.Infrastructure.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext CHARACTER SET utf8");
+                        .HasColumnType("varchar(128) CHARACTER SET utf8")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8");
+                        .IsRequired()
+                        .HasColumnType("varchar(32) CHARACTER SET utf8")
+                        .HasMaxLength(32);
+
+                    b.Property<bool>("Published")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("category");
                 });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.Chat", b =>
@@ -55,6 +64,10 @@ namespace CNBot.Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext CHARACTER SET utf8")
                         .HasMaxLength(4000);
+
+                    b.Property<string>("InviteLink")
+                        .HasColumnType("varchar(512) CHARACTER SET utf8")
+                        .HasMaxLength(512);
 
                     b.Property<int>("MembersCount")
                         .HasColumnType("int");
@@ -99,7 +112,7 @@ namespace CNBot.Infrastructure.Migrations
 
                     b.HasIndex("ChatId");
 
-                    b.ToTable("ChatCategory");
+                    b.ToTable("chat_category");
                 });
 
             modelBuilder.Entity("CNBot.Core.Entities.Chats.ChatMember", b =>
@@ -249,6 +262,13 @@ namespace CNBot.Infrastructure.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<long>("TGMessageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext CHARACTER SET utf8")
+                        .HasMaxLength(4096);
 
                     b.Property<int>("Type")
                         .HasColumnType("int");

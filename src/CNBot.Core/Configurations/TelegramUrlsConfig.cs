@@ -13,7 +13,9 @@
         }
         public static class Message
         {
+            public static string AnswerCallbackQuery(string token) => $"{API_ENDPOINT}/bot{token}/answerCallbackQuery";
             public static string Send(string token) => $"{API_ENDPOINT}/bot{token}/sendMessage";
+            public static string EditText(string token) => $"{API_ENDPOINT}/bot{token}/editMessageText";
             public static string SendPhoto(string token) => $"{API_ENDPOINT}/bot{token}/sendPhoto";
             public static string SendAudio(string token) => $"{API_ENDPOINT}/bot{token}/sendAudio";
             public static string SendVideo(string token) => $"{API_ENDPOINT}/bot{token}/sendVideo";
